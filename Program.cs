@@ -1,7 +1,13 @@
+using practice_core.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IScopedGuidService,ScopedService>();
+builder.Services.AddSingleton<ISingletonGuidService,SingletonService>();
+builder.Services.AddTransient<ITransientGuidService,TransientService>();	
+
 
 var app = builder.Build();
 
@@ -24,23 +30,4 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
-app.Use(async (context,next) =>
-{
-	Console.WriteLine("before Use");
-	await next();
-	Console.WriteLine("after Use");
-});
-app.Use(async (context, next) =>
-{
-	Console.WriteLine("before2 Use2");
-	await next.Invoke();
-	Console.WriteLine("after2 Use2");
-});
-app.Run(async context =>
-{
-	Console.WriteLine("before start2");
-	await context.Response.WriteAsync("Hello2.");
-	Console.WriteLine("after start2");
-});
 app.Run();
